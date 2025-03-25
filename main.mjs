@@ -1,66 +1,70 @@
 import fetch from 'node-fetch';
 
 const BASE_URL = 'https://alchemy-kd0l.onrender.com';
-const player = 'christoffw@uia.no';
+const player = 'christoffw1@uia.no';
 
+//Task 1
 async function startGame() {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/start?player=${encodeURIComponent(player)}`
-    );
+    const response = await fetch(`${BASE_URL}/start?player=${encodeURIComponent(player)}`);
     if (!response.ok) {
       throw new Error(`Failed to start game (HTTP ${response.status}).`);
     }
-    const data = await response.json();
-    console.log('Game started:', data);
-  } catch (err) {
-    console.error('Error starting game:', err);
+    return response.json();
   }
-}
-
-async function submitAnswer(answer) {
-  try {
+  
+  async function submitAnswer(answer) {
     const response = await fetch(`${BASE_URL}/answer`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        player: player,
-        answer: answer
-      })
+      body: JSON.stringify({ player, answer })
     });
     if (!response.ok) {
       throw new Error(`Answer submission failed (HTTP ${response.status}).`);
     }
-    const data = await response.json();
-    console.log('Answer response:', data);
-  } catch (err) {
-    console.error('Incorrect or error:', err);
+    return response.json();
   }
-}
+  
+  function extractSymbols(challengeText) {
+    const match = challengeText.match(/[☉☿☽♂]+/);
+    if (!match) {
+      throw new Error("Could not find alchemical symbols in the text.");
+    }
+    return match[0]; 
+  }
+  
+  function decodeAlchemicalSymbols(symbolsString) {
+    const symbolMap = {
+      '☉': 'Gold',
+      '☿': 'Quicksilver',
+      '☽': 'Silver',
+      '♂': 'Iron'
+    };
+    return symbolsString
+      .split('')
+      .map(s => symbolMap[s] || 'UNKNOWN')
+      .join('');
+  }
+  
+  (async function main() {
+    try {
+      const puzzleData = await startGame();
+      console.log('Puzzle data:', puzzleData);
+  
+      const puzzleText = puzzleData.challenge;
+      console.log("Raw puzzle text:", puzzleText);
+  
+      const foundSymbols = extractSymbols(puzzleText);
+      console.log("Found symbols:", foundSymbols);
 
-function getClue() {
-  const clueUrl = `${BASE_URL}/clue?player=${encodeURIComponent(player)}`;
-  console.log(`Open this clue in your browser: ${clueUrl}`);
-}
+      const guess = decodeAlchemicalSymbols(foundSymbols);
+      console.log("Decoded guess:", guess);
 
+      const result = await submitAnswer(guess);
+      console.log("Answer result:", result);
+    } catch (err) {
+      console.error("Error in Task 1 script:", err);
+    }
+  })();
 
-(async function main() {
-
-await startGame();
-
-  // Then try submitting your guess:
-    
-  // Puzzle 1 Answer
-  // await submitAnswer("GoldQuicksilverSilverIronGold");
-    // Puzzle 2 Answer
-  // await submitAnswer("Silver");
-    // Puzzle 3 Answer
-  // await submitAnswer("☿♀🜍🜂🜔🜄☉🜁");
-    // Puzzle 4 Answer
-  //await submitAnswer("Argon");
 
   
-  // Or, to just see the clue URL:
-getClue();
-})();
-
