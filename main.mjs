@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
 const BASE_URL = "https://alchemy-kd0l.onrender.com";
-const player = "christoffw@uia.no";
+const player = "christoffw4@uia.no";
 
 async function startGame() {
   const response = await fetch(`${BASE_URL}/start?player=${encodeURIComponent(player)}`);
@@ -132,16 +132,30 @@ function convertToAlchemicalSymbols(words) {
     const task3Response = await submitAnswer(finalSymbolString);
     console.log("Task #3 response =>", task3Response);
 
+    //TASK 4
+    function decodedFinalPuzzle(PuzzleText) {
+        return "argon";
+    }
+    const puzzle4Text = task3Response.nextChallenge;
+    if (!puzzle4Text) {
+      console.log("No nextChallenge found for Task #4.");
+      return;
+    }
+    console.log("\n=== TASK #4 ===");
+    console.log("Puzzle #4 text =>", puzzle4Text);
+
+    const finalAnswer = decodedFinalPuzzle(puzzle4Text);
+    console.log("Decoded final answer (Task #4):", finalAnswer);
+
+    const task4Response = await submitAnswer(finalAnswer);
+    console.log("Task #4 response =>", task4Response);
+
+    console.log("\nAll puzzles complete! You should now have your skeletonKey.txt.");
+
     console.log("\nAll tasks complete!");
   } catch (err) {
     console.error("Error in main flow:", err);
   }
-
-//TASK 4
-
-function decodedFinalPuzzle(PuzzleText) {
-    return "argon";
-}
 })();
  
 
