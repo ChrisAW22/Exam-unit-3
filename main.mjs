@@ -66,5 +66,70 @@ async function startGame() {
     }
   })();
 
+//Task 2
 
+async function getSecondChallenge() {
+
+    const response = await fetch(
+      `${BASE_URL}/start?player=${encodeURIComponent(player)}`
+    );
   
+    if (!response.ok) {
+      throw new Error(`Could not get second challenge (HTTP ${response.status}).`);
+    }
+  
+    return response.json(); 
+  }
+
+  async function submitAnswer2(answer) {
+    const response = await fetch(`${BASE_URL}/answer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ player, answer })
+    });
+  
+    if (!response.ok) {
+      throw new Error(`Answer submission failed (HTTP ${response.status}).`);
+    }
+  
+    return response.json(); 
+  }
+
+  function extractPoem(challengeText) {
+
+    const start = challengeText.indexOf("Still");
+    const end = challengeText.indexOf("Rime.", start);
+    
+    if (start === -1 || end === -1) {
+      return challengeText;
+    }
+    return challengeText.slice(start, end + 5);
+  }
+  function decodePoem(poemText) {
+    const capitalWords = poemText.match(/\b[A-Z][a-zA-Z']*\b/g);
+    if (!capitalWords) {
+      throw new Error("No capitalized words found to decode.");
+    }
+    const letters = capitalWords.map(word => word[0]);
+    return letters.join('').toUpperCase(); 
+  }
+  
+  (async function main() {
+    try {
+      const puzzleData = await getSecondChallenge();
+      console.log("Puzzle Data:", puzzleData);
+
+      const poemText = extractPoem(puzzleData.challenge);
+      console.log("Extracted poem:", poemText);
+
+      const codeWord = decodePoem(poemText);
+      console.log("Decoded poem =>", codeWord);
+
+      const result = await submitAnswer2(codeWord);
+      console.log("Submission response:", result);
+    } catch (err) {
+      console.error("Error decoding the poem puzzle:", err);
+    }
+  })();
+  
+//Task 3
