@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 
-// Remove the trailing slash in BASE_URL:
-const BASE_URL = 'https://alchemy-kd0l.onrender.com/';
+const BASE_URL = 'https://alchemy-kd0l.onrender.com';
 const player = 'christoffw@uia.no';
 
 async function startGame() {
@@ -40,20 +39,28 @@ async function submitAnswer(answer) {
 }
 
 function getClue() {
-  // This just logs the clue URL in the terminal, 
-  // but you can open it in a browser to see the clue.
   const clueUrl = `${BASE_URL}/clue?player=${encodeURIComponent(player)}`;
   console.log(`Open this clue in your browser: ${clueUrl}`);
 }
 
-// Self-invoking async function to run your script
+
 (async function main() {
-  // If the puzzle requires you to start the game first, uncomment:
-  // await startGame();
+
+await startGame();
 
   // Then try submitting your guess:
-  await submitAnswer("GoldQuicksilverSilverIron");
+    
+  // Puzzle 1 Answer
+  // await submitAnswer("GoldQuicksilverSilverIronGold");
+    // Puzzle 2 Answer
+  // await submitAnswer("Silver");
+    // Puzzle 3 Answer
+  // await submitAnswer("☿♀🜍🜂🜔🜄☉🜁");
+    // Puzzle 4 Answer
+  //await submitAnswer("Argon");
 
+  
   // Or, to just see the clue URL:
-  // getClue();
+getClue();
 })();
+
